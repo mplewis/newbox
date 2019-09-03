@@ -1,0 +1,25 @@
+DEPENDENCIES
+  newbox
+    path: .
+    metadata: true
+
+GRAPH
+  build-essential (8.2.1)
+    mingw (>= 1.1)
+    seven_zip (>= 0.0.0)
+  git (9.0.1)
+    build-essential (>= 5.0.0)
+  git_user (0.5.0)
+    git (>= 0.0.0)
+    ssh_known_hosts (>= 0.0.0)
+    user (>= 0.0.0)
+  mingw (2.1.0)
+    seven_zip (>= 0.0.0)
+  newbox (0.1.0)
+    git_user (>= 0.0.0)
+    user (>= 0.0.0)
+  seven_zip (3.1.1)
+    windows (>= 0.0.0)
+  ssh_known_hosts (7.0.0)
+  user (0.7.0)
+  windows (6.0.0)
