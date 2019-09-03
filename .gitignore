@@ -1,0 +1,8 @@
+cookbooks/build-essential
+cookbooks/git
+cookbooks/git_user
+cookbooks/mingw
+cookbooks/seven_zip
+cookbooks/ssh_known_hosts
+cookbooks/user
+cookbooks/windows

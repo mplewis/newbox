@@ -19,11 +19,21 @@ git_user USER do
 end
 
 execute 'install_oh-my-zsh' do
-  command 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"'
   not_if { ::File.directory?("#{HOME}/.oh-my-zsh") }
+  command 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"'
 end
 
 user USER do
   action :modify
   shell 'zsh'
+end
+
+bash 'install_scm_breeze' do
+  not_if { ::File.directory?("#{HOME}/.scm_breeze") }
+  cwd HOME
+  code <<~CMDS
+    git clone git://github.com/scmbreeze/scm_breeze.git ~/.scm_breeze
+    ~/.scm_breeze/install.sh
+    source ~/.zshrc
+  CMDS
 end
