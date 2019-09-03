@@ -9,4 +9,3 @@ chef_version '>= 14.0'
 
 depends 'user'
 depends 'git_user'
-depends 'oh_my_zsh'
