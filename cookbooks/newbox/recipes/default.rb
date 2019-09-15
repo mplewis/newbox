@@ -21,6 +21,11 @@ execute 'add_golang_backports_repo' do
   command 'sudo add-apt-repository ppa:longsleep/golang-backports'
 end
 
+execute 'import_rvm_keys' do
+  not_if 'gpg --list-keys | grep "RVM signing"'
+  command 'gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB'
+end
+
 APT_PACKAGES.each do |pkg|
   apt_package pkg
 end
@@ -45,6 +50,11 @@ end
 user USER do
   action :modify
   shell 'zsh'
+end
+
+group 'rvm' do
+  append true
+  members USER
 end
 
 bash 'install_scm_breeze' do
@@ -143,6 +153,12 @@ bash 'install_bat' do
     dpkg -i /tmp/bat.deb
     rm /tmp/bat.deb
   CMDS
+end
+
+execute 'install_rvm_and_ruby' do
+  user USER
+  not_if 'which rvm'
+  command 'curl -sSL https://get.rvm.io | bash -s stable --ruby --auto-dotfiles'
 end
 
 execute 'fix_perms' do
