@@ -166,6 +166,23 @@ bash 'install_k9s' do
   CMDS
 end
 
+bash 'install_argocd' do
+  not_if 'which argocd'
+  code <<~CMDS
+    wget https://github.com/argoproj/argo-cd/releases/download/v1.2.1/argocd-linux-amd64 -O /usr/local/bin/argocd
+    chmod a+x /usr/local/bin/argocd
+  CMDS
+end
+
+bash 'install_jump' do
+  not_if 'which jump'
+  code <<~CMDS
+    wget https://github.com/gsamokovarov/jump/releases/download/v0.23.0/jump_linux_amd64_binary -O /usr/local/bin/jump
+    chmod a+x /usr/local/bin/jump
+    echo 'eval "$(jump shell)"' >> ~/.zshrc
+  CMDS
+end
+
 execute 'install_rvm_and_ruby' do
   user USER
   not_if 'which rvm'
