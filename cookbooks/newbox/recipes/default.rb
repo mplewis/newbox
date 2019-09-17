@@ -6,6 +6,7 @@ APT_PACKAGES = %w(
   inetutils-tools
   libssl-dev
   molly-guard
+  shellcheck
   sl
   unzip
   zip
@@ -152,6 +153,16 @@ bash 'install_bat' do
     wget https://github.com/sharkdp/bat/releases/download/v0.12.0/bat_0.12.0_amd64.deb -O /tmp/bat.deb
     dpkg -i /tmp/bat.deb
     rm /tmp/bat.deb
+  CMDS
+end
+
+bash 'install_k9s' do
+  not_if 'which k9s'
+  code <<~CMDS
+    wget https://github.com/derailed/k9s/releases/download/0.8.4/k9s_0.8.4_Linux_x86_64.tar.gz -O /tmp/k9s.tgz
+    tar xvf /tmp/k9s.tgz k9s
+    mv k9s /usr/local/bin/k9s
+    rm /tmp/k9s.tgz
   CMDS
 end
 
