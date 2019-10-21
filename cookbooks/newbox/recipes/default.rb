@@ -200,6 +200,15 @@ bash 'install_helm' do
   CMDS
 end
 
+bash 'install_fluxctl' do
+  not_if 'which fluxctl'
+  code <<~CMDS
+    wget https://github.com/fluxcd/flux/releases/download/1.15.0/fluxctl_linux_amd64 -O /tmp/fluxctl
+    mv /tmp/fluxctl /usr/local/bin/fluxctl
+    chmod a+x /usr/local/bin/fluxctl
+  CMDS
+end
+
 execute 'fix_perms' do
   command "chown -R #{USER} #{HOME}"
 end
