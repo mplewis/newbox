@@ -189,6 +189,17 @@ execute 'install_rvm_and_ruby' do
   command 'curl -sSL https://get.rvm.io | bash -s stable --ruby --auto-dotfiles'
 end
 
+bash 'install_helm' do
+  not_if 'which helm'
+  code <<~CMDS
+    cd /tmp
+    wget https://get.helm.sh/helm-v3.0.0-beta.4-linux-amd64.tar.gz -O helm.tar.gz
+    tar xvf helm.tar.gz
+    mv /tmp/linux-amd64/helm /usr/local/bin/helm
+    rm -rf helm.tar.gz linux-amd64
+  CMDS
+end
+
 execute 'fix_perms' do
   command "chown -R #{USER} #{HOME}"
 end
