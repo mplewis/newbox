@@ -209,6 +209,26 @@ bash 'install_fluxctl' do
   CMDS
 end
 
+bash 'install_ngrok' do
+  not_if 'which ngrok'
+  code <<~CMDS
+    cd /tmp
+    wget https://bin.equinox.io/c/4VmDzA7iaHb/ngrok-stable-linux-amd64.zip -O ngrok.zip
+    unzip ngrok.zip
+    mv ngrok /usr/local/bin/ngrok
+    rm ngrok.zip
+  CMDS
+end
+
+bash 'install_skaffold' do
+  not_if 'which skaffold'
+  code <<~CMDS
+    curl -Lo skaffold https://storage.googleapis.com/skaffold/builds/latest/skaffold-linux-amd64
+    chmod +x skaffold
+    sudo mv skaffold /usr/local/bin
+  CMDS
+end
+
 execute 'fix_perms' do
   command "chown -R #{USER} #{HOME}"
 end
