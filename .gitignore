@@ -1,3 +1,4 @@
+chef_guid
 cookbooks/build-essential
 cookbooks/git
 cookbooks/git_user
@@ -7,3 +8,5 @@ cookbooks/seven_zip
 cookbooks/ssh_known_hosts
 cookbooks/user
 cookbooks/windows
+local-mode-cache
+nodes
