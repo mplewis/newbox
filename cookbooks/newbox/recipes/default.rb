@@ -1,5 +1,7 @@
-USER = 'mplewis'
+require 'etc'
+
 APT_PACKAGES = %w(
+  bat
   build-essential
   dos2unix
   golang-go
@@ -13,22 +15,46 @@ APT_PACKAGES = %w(
   zsh
 )
 
+BREW_PACKAGES = %w(
+  bat
+  exa
+  go
+  jump
+  pyenv
+  shellcheck
+  sl
+  wget
+  zsh
+)
+
+BREW_CASKS = %w(
+  gpg-suite
+  mollyguard
+)
+
+USER = Etc.getlogin
 HOME = node['etc']['passwd'][USER]['dir']
+MACOS = node[:platform] == 'mac_os_x'
 
-# https://github.com/golang/go/wiki/Ubuntu
-execute 'add_golang_backports_repo' do
-  # https://askubuntu.com/a/148954
-  not_if 'grep ^ /etc/apt/sources.list /etc/apt/sources.list.d/* | grep longsleep-ubuntu-golang-backports'
-  command 'sudo add-apt-repository ppa:longsleep/golang-backports'
-end
+if MACOS
+  BREW_PACKAGES.each do |pkg|
+    package pkg
+  end
+  
+  BREW_CASKS.each do |pkg|
+    homebrew_cask pkg
+  end
+else
+  # https://github.com/golang/go/wiki/Ubuntu
+  execute 'add_golang_backports_repo' do
+    # https://askubuntu.com/a/148954
+    not_if 'grep ^ /etc/apt/sources.list /etc/apt/sources.list.d/* | grep longsleep-ubuntu-golang-backports'
+    command 'sudo add-apt-repository ppa:longsleep/golang-backports'
+  end
 
-execute 'import_rvm_keys' do
-  not_if 'gpg --list-keys | grep "RVM signing"'
-  command 'gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB'
-end
-
-APT_PACKAGES.each do |pkg|
-  apt_package pkg
+  APT_PACKAGES.each do |pkg|
+    apt_package pkg
+  end
 end
 
 git_user USER do
@@ -43,14 +69,27 @@ execute 'fix_gopath' do
   command 'export GOPATH=~/.gopath'
 end
 
-execute 'install_oh-my-zsh' do
-  not_if { ::File.directory?("#{HOME}/.oh-my-zsh") }
-  command 'sh -c "$(curl -fsSL https://raw.githubusercontent.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"'
+script 'install_prezto' do
+  interpreter 'zsh'
+  not_if { ::File.directory?("#{HOME}/.zprezto") }
+  code <<~CMDS
+    git clone --recursive https://github.com/sorin-ionescu/prezto.git "${ZDOTDIR:-$HOME}/.zprezto"
+    setopt EXTENDED_GLOB
+    for rcfile in "${ZDOTDIR:-$HOME}"/.zprezto/runcoms/^README.md(.N); do
+      ln -s "$rcfile" "${ZDOTDIR:-$HOME}/.${rcfile:t}"
+    done
+  CMDS
 end
 
 user USER do
+  not_if { MACOS }
   action :modify
   shell 'zsh'
+end
+
+execute 'import_rvm_keys' do
+  not_if 'gpg --list-keys | grep "RVM signing"'
+  command 'gpg --keyserver hkp://pool.sks-keyservers.net --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB'
 end
 
 group 'rvm' do
@@ -91,6 +130,7 @@ end
 
 bash 'install_exa' do
   not_if 'which exa'
+  not_if { MACOS }
   code <<~CMDS
     wget https://github.com/ogham/exa/releases/download/v0.9.0/exa-linux-x86_64-0.9.0.zip -O /tmp/exa.zip
     unzip /tmp/exa.zip
@@ -147,15 +187,6 @@ bash 'install_diff-so-fancy' do
   CMDS
 end
 
-bash 'install_bat' do
-  not_if 'which bat'
-  code <<~CMDS
-    wget https://github.com/sharkdp/bat/releases/download/v0.12.0/bat_0.12.0_amd64.deb -O /tmp/bat.deb
-    dpkg -i /tmp/bat.deb
-    rm /tmp/bat.deb
-  CMDS
-end
-
 bash 'install_k9s' do
   not_if 'which k9s'
   code <<~CMDS
@@ -176,6 +207,7 @@ end
 
 bash 'install_jump' do
   not_if 'which jump'
+  not_if { MACOS }
   code <<~CMDS
     wget https://github.com/gsamokovarov/jump/releases/download/v0.23.0/jump_linux_amd64_binary -O /usr/local/bin/jump
     chmod a+x /usr/local/bin/jump
