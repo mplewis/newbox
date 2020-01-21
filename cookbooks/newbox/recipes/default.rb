@@ -35,6 +35,7 @@ BREW_PACKAGES = %w(
 )
 
 BREW_CASKS = %w(
+  aws-vault
   gpg-suite
   mollyguard
 )
