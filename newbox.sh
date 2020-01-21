@@ -3,11 +3,7 @@
 if ! [ -x "$(command -v chef)" ]; then
   echo 'Installing Chef...'
   curl -L https://www.opscode.com/chef/install.sh | sudo bash
-
-  (
-    cd cookbooks/newbox || return
-    berks vendor ..
-  )
+  ./vendor.sh
 fi
 
-sudo chef-client -z -o newbox
+sudo chef-client -z -o newbox --config config.rb
