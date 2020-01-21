@@ -6,5 +6,6 @@ if ! [ -x "$(command -v chef)" ]; then
   ./vendor.sh
 fi
 
-export SUDO_ASKPASS="$(which ssh-askpass)"
+export SUDO_ASKPASS
+SUDO_ASKPASS="$(command -v ssh-askpass)"
 sudo chef-client -z -o newbox --config config.rb
