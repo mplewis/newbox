@@ -16,11 +16,18 @@ APT_PACKAGES = %w(
 )
 
 BREW_PACKAGES = %w(
+  autoconf
+  automake
+  awscli
   bat
   exa
   go
+  jq
   jump
+  libtool
+  pipenv
   pyenv
+  python3
   shellcheck
   sl
   wget
