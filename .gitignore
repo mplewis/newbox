@@ -1,6 +1,7 @@
 cookbooks/build-essential
 cookbooks/git
 cookbooks/git_user
+cookbooks/homebrew
 cookbooks/mingw
 cookbooks/seven_zip
 cookbooks/ssh_known_hosts
